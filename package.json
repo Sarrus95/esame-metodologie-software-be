@@ -1,0 +1,32 @@
+{
+  "name": "esame-metodologie-software-be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node build/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sarrus95/esame-metodologie-software-be.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sarrus95/esame-metodologie-software-be/issues"
+  },
+  "homepage": "https://github.com/Sarrus95/esame-metodologie-software-be#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^22.14.0"
+  }
+}
