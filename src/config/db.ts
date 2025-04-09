@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(`mongodb://localhost:27017/bookShareApp`);
+    await mongoose.connect(process.env.MONGODB_DB || "");
     console.log(" MongoDB connesso!");
   } catch (error) {
     console.error(" Errore di connessione a MongoDB:", error);

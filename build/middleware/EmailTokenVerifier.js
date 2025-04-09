@@ -12,15 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
+const User_1 = __importDefault(require("../models/User"));
+const EmailTokenVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.MONGODB_DB || "");
-        console.log(" MongoDB connesso!");
+        const result = yield User_1.default.findOne({
+            emailAuthToken: req.params.token,
+            emailVerified: false,
+        });
+        if (result) {
+            next();
+        }
+        else {
+            res.status(401).send("Invalid Token!");
+        }
     }
-    catch (error) {
-        console.error(" Errore di connessione a MongoDB:", error);
-        process.exit(1);
+    catch (e) {
+        res.status(500).send(e);
     }
 });
-exports.default = connectDB;
+exports.default = EmailTokenVerifier;

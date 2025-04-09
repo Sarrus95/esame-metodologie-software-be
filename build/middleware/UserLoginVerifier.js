@@ -12,15 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
+const bcrypt_ts_1 = require("bcrypt-ts");
+const User_1 = __importDefault(require("../models/User"));
+const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.MONGODB_DB || "");
-        console.log(" MongoDB connesso!");
+        const userExists = yield User_1.default.findOne({
+            username: req.body.username,
+            emailVerified: true,
+        });
+        if (userExists) {
+            const passwordCorrect = (0, bcrypt_ts_1.compareSync)(req.body.password, userExists.password);
+            if (passwordCorrect) {
+                next();
+            }
+            else {
+                res.status(401).send("Invalid Credentials!");
+            }
+        }
     }
-    catch (error) {
-        console.error(" Errore di connessione a MongoDB:", error);
-        process.exit(1);
+    catch (e) {
+        res.status(500).send(e);
     }
 });
-exports.default = connectDB;
+exports.default = UserLoginVerifier;

@@ -20,9 +20,11 @@
   "homepage": "https://github.com/Sarrus95/esame-metodologie-software-be#readme",
   "description": "",
   "dependencies": {
+    "bcrypt-ts": "^6.0.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",

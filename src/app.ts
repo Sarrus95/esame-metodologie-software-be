@@ -1,8 +1,9 @@
-import dotenv from './env/dotenvConfig'; 
-import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import express from 'express';
 import userRouter from './routes/users';
 import connectDB from './config/db';
 
+dotenv.config();
 const app = express();
 
 app.use(express.json());
@@ -12,7 +13,7 @@ app.get('/',(_, res) => {
     res.send("Server is running!")
 })
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 connectDB();
 
