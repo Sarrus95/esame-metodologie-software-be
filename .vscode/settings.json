@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "users",
-        "routes"
+        "routes",
+        "auth-email"
     ]
 }

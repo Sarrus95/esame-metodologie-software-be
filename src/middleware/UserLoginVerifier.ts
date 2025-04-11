@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { compareSync } from "bcrypt-ts";
 import User from "../models/User";
 

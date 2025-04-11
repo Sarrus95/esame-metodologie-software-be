@@ -5,10 +5,11 @@ import User from "../models/User";
 import EmailTokenVerifier from "../middleware/EmailTokenVerifier";
 import UserLoginVerifier from "../middleware/UserLoginVerifier";
 import UserTokenVerifier from "../middleware/UserTokenVerifier";
+import EmailTokenSender from "../middleware/EmailTokenSender";
 
 const usersRouter = Router();
 
-usersRouter.post("/signup", async (req, res) => {
+usersRouter.post("/signup", async (req, res,next) => {
   try {
     const newUser = {
       ...req.body,
@@ -17,11 +18,12 @@ usersRouter.post("/signup", async (req, res) => {
       loginAuthToken: null
     };
     await User.create(newUser);
-    res.status(201).send("User Created!");
+    req.body.userData = newUser;
+    next();
   } catch (e) {
     res.status(500).send(e);
   }
-});
+},EmailTokenSender);
 
 usersRouter.get("/auth-email/:token", EmailTokenVerifier, async (req, res) => {
   try {
