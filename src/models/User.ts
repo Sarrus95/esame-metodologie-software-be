@@ -1,6 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-import BookInterface from "../interfaces/Book";
-import BOIInterface from "../interfaces/BookOfInterest";
 
 interface IUser extends Document {
     username: string;
@@ -10,8 +8,8 @@ interface IUser extends Document {
     emailVerified: boolean;
     loginAuthToken: string;
     phoneNo: string;
-    booksOfInterest: BOIInterface[];
-    myBooks: BookInterface[];
+    booksOfInterest: Schema.Types.ObjectId[];
+    myBooks: Schema.Types.ObjectId[];
 }
 const UserSchema = new Schema<IUser>(
   {

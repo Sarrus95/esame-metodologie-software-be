@@ -4,12 +4,13 @@ import { v4 as uuidv4 } from "uuid";
 import User from "../models/User";
 import EmailTokenVerifier from "../middleware/EmailTokenVerifier";
 import UserLoginVerifier from "../middleware/UserLoginVerifier";
+import UserTokenVerifier from "../middleware/UserTokenVerifier";
 
-const userRouter = Router();
+const usersRouter = Router();
 
-userRouter.post("/signup", async (req, res) => {
+usersRouter.post("/signup", async (req, res) => {
   try {
-    const newUser: UserReg = {
+    const newUser = {
       ...req.body,
       password: hashSync(req.body.password),
       emailAuthToken: uuidv4(),
@@ -22,7 +23,7 @@ userRouter.post("/signup", async (req, res) => {
   }
 });
 
-userRouter.get("/auth-email/:token", EmailTokenVerifier, async (req, res) => {
+usersRouter.get("/auth-email/:token", EmailTokenVerifier, async (req, res) => {
   try {
     await User.findOneAndUpdate(
       { emailAuthToken: req.params.token },
@@ -34,7 +35,7 @@ userRouter.get("/auth-email/:token", EmailTokenVerifier, async (req, res) => {
   }
 });
 
-userRouter.post("/login", UserLoginVerifier, async (req, res) => {
+usersRouter.post("/login", UserLoginVerifier, async (req, res) => {
   try {
     await User.findOneAndUpdate(
       { username: req.body.username },
@@ -46,4 +47,15 @@ userRouter.post("/login", UserLoginVerifier, async (req, res) => {
   }
 });
 
-export default userRouter;
+usersRouter.patch("/user/:id",UserTokenVerifier,async (req,res) => {
+  try{
+    const userId = req.params.id;
+    const userInfo = req.body;
+    await User.findByIdAndUpdate(userId,userInfo);
+    res.status(204).send("User info successfully updated!");
+  } catch(e) {
+    res.status(500).send(e);
+  }
+})
+
+export default usersRouter;
