@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "users",
         "routes",
-        "auth-email"
+        "auth-email",
+        "EmailTokenSender"
     ]
 }

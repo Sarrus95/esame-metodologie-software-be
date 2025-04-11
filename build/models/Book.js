@@ -44,10 +44,7 @@ const BookSchema = new mongoose_1.Schema({
     description: { type: String, default: "" },
     status: { type: String, default: "In Vendita" },
     submitDate: { type: Date, default: () => new Date() },
-    owner: {
-        id: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
-        username: { type: String, required: true }
-    }
+    ownerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
 });
 const Book = mongoose_1.default.model("Book", BookSchema);
 exports.default = Book;

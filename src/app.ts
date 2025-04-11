@@ -2,13 +2,16 @@ import dotenv from 'dotenv';
 import express from 'express';
 import userRouter from './routes/users';
 import connectDB from './config/db';
+import booksRouter from './routes/books';
+import booksOfInterestRouter from './routes/booksOfInterest';
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
 app.use('/users',userRouter);
-app.use("/books/",connectDB);
+app.use("/books/",booksRouter);
+app.use("/books-of-interest/",booksOfInterestRouter)
 
 app.get('/',(_, res) => { 
     res.send("Server is running!")

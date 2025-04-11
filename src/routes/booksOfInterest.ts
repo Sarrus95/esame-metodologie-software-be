@@ -2,9 +2,9 @@ import { Router } from "express";
 import BookOfInterest from "../models/BookOfInterest";
 import UserTokenVerifier from "../middleware/UserTokenVerifier";
 
-const booksOfInterest = Router();
+const booksOfInterestRouter = Router();
 
-booksOfInterest.post("/add-interest",UserTokenVerifier, async (req, res) => {
+booksOfInterestRouter.post("/add-interest",UserTokenVerifier, async (req, res) => {
   try {
     const newBookOfInterest = {
       ...req.body,
@@ -17,7 +17,7 @@ booksOfInterest.post("/add-interest",UserTokenVerifier, async (req, res) => {
   }
 });
 
-booksOfInterest.patch("/interest/:id",UserTokenVerifier,async (req,res) => {
+booksOfInterestRouter.patch("/interest/:id",UserTokenVerifier,async (req,res) => {
   try{
     const interestId = req.params.id;
     const interestInfo = req.body;
@@ -28,4 +28,4 @@ booksOfInterest.patch("/interest/:id",UserTokenVerifier,async (req,res) => {
   }
 })
 
-export default booksOfInterest;
+export default booksOfInterestRouter;
