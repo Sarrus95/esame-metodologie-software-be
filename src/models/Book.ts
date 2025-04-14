@@ -6,6 +6,7 @@ interface IBook extends Document {
   coverImg: string;
   printYear: number;
   printCompany: string;
+  genre: string;
   condition: grading;
   description: string;
   status: status;
@@ -18,6 +19,7 @@ const BookSchema = new Schema<IBook>({
   coverImg: { type: String, default: "" },
   printYear: { type: Number, required: true },
   printCompany: { type: String, required: true },
+  genre: { type: String, required: true },
   condition: { type: String, required: true },
   description: { type: String, default: "" },
   status: { type: String, default: "In Vendita" },

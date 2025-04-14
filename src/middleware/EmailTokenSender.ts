@@ -34,9 +34,10 @@ const EmailTokenSender = async (
         html: `<b>Verify your email, click on the following link:</b> <a href="${checkUrl}">${checkUrl}</a>`,
       });
       if (info) {
-        console.log("Message sent: %s", info.messageId);
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-        res.status(201).send("User created!");
+        res.status(201).json({
+          message: "User created!",
+          activationURL: nodemailer.getTestMessageUrl(info),
+        });
       } else {
         res.status(500).send("Internal Server Error!");
       }

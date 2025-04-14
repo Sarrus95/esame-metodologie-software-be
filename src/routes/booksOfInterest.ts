@@ -1,6 +1,6 @@
 import { Router } from "express";
 import BookOfInterest from "../models/BookOfInterest";
-import UserTokenVerifier from "../middleware/UserTokenVerifier";
+import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
 
 const booksOfInterestRouter = Router();
 

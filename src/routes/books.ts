@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Book from "../models/Book";
-import UserTokenVerifier from "../middleware/UserTokenVerifier";
-import BookBinder from "../middleware/BookBinder";
+import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
+import BookBinder from "../middleware/binder/BookBinder";
 
 const booksRouter = Router();
 

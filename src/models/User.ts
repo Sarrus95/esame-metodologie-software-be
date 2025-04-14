@@ -10,6 +10,8 @@ interface IUser extends Document {
     phoneNo: string;
     booksOfInterest: Schema.Types.ObjectId[];
     myBooks: Schema.Types.ObjectId[];
+    sentRequests: Schema.Types.ObjectId[];
+    receivedRequests: Schema.Types.ObjectId[];
 }
 const UserSchema = new Schema<IUser>(
   {

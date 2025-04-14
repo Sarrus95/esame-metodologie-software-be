@@ -24,7 +24,7 @@ const usersRouter = (0, express_1.Router)();
 usersRouter.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newUser = Object.assign(Object.assign({}, req.body), { password: (0, bcrypt_ts_1.hashSync)(req.body.password), emailAuthToken: (0, uuid_1.v4)(), loginAuthToken: null });
-        //await User.create(newUser);
+        yield User_1.default.create(newUser);
         req.body.userData = newUser;
         next();
     }
