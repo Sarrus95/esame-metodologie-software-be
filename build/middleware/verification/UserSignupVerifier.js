@@ -12,30 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const bcrypt_ts_1 = require("bcrypt-ts");
-const User_1 = __importDefault(require("../../models/User"));
 const express_validator_1 = require("express-validator");
-const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const check = (0, express_validator_1.validationResult)(req);
-        if (check.isEmpty()) {
-            const userExists = yield User_1.default.findOne({
-                username: req.body.username,
-                emailVerified: true,
-            });
-            if (userExists) {
-                const passwordCorrect = (0, bcrypt_ts_1.compareSync)(req.body.password, userExists.password);
-                if (passwordCorrect) {
-                    next();
-                }
-            }
+const User_1 = __importDefault(require("../../models/User"));
+const UserSignupVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const check = (0, express_validator_1.validationResult)(req);
+    if (check.isEmpty()) {
+        const duplicateUser = yield User_1.default.findOne({ email: req.body.email });
+        if (!duplicateUser) {
+            next();
         }
         else {
-            res.status(401).send("Invalid Credentials!");
+            res.status(409).send("User Already Registered!");
         }
     }
-    catch (e) {
-        res.status(500).send(e);
+    else {
+        res.status(404).send("Invalid User Input");
     }
 });
-exports.default = UserLoginVerifier;
+exports.default = UserSignupVerifier;

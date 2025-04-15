@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 dotenv.config();
 
@@ -7,7 +7,6 @@ dotenv.config();
 const EmailTokenSender = async (
   req: Request,
   res: Response,
-  next: NextFunction
 ) => {
   try {
     const testAccount = await nodemailer.createTestAccount();

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction, Router } from "express";
-import { validationResult } from "express-validator";
 import {
   emailTokenValidator,
   userLoginValidator,
@@ -12,6 +11,7 @@ import User from "../models/User";
 import EmailTokenVerifier from "../middleware/verification/EmailTokenVerifier";
 import UserLoginVerifier from "../middleware/verification/UserLoginVerifier";
 import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
+import UserSignupVerifier from "../middleware/verification/UserSignupVerifier";
 import EmailTokenSender from "../middleware/EmailTokenSender";
 
 const usersRouter = Router();
@@ -19,24 +19,19 @@ const usersRouter = Router();
 usersRouter.post(
   "/signup",
   userRegistrationValidator,
+  UserSignupVerifier,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const check = validationResult(req);
-      if (check.isEmpty()) {
-        const newUser = {
-          ...req.body,
-          password: hashSync(req.body.password),
-          emailAuthToken: uuidv4(),
-          loginAuthToken: null,
-        };
-        await User.create(newUser);
-        req.body.userData = newUser;
-        next();
-      }
-      else{
-        res.status(400).send("Invalid user input");
-      }
-    } catch(e) {
+      const newUser = {
+        ...req.body,
+        password: hashSync(req.body.password),
+        emailAuthToken: uuidv4(),
+        loginAuthToken: null,
+      };
+      await User.create(newUser);
+      req.body.userData = newUser;
+      next();
+    } catch (e) {
       res.status(500).send("Internal Server Error!");
     }
   },
@@ -66,7 +61,7 @@ usersRouter.post(
   UserLoginVerifier,
   async (req: Request, res: Response) => {
     try {
-      const userToken = uuidv4(); 
+      const userToken = uuidv4();
       await User.findOneAndUpdate(
         { username: req.body.username },
         { loginAuthToken: userToken }

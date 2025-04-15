@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 dotenv_1.default.config();
-const EmailTokenSender = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const EmailTokenSender = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const testAccount = yield nodemailer_1.default.createTestAccount();
         const transporter = nodemailer_1.default.createTransport({
