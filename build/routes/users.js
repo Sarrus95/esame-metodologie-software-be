@@ -13,26 +13,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const express_validator_1 = require("express-validator");
+const validators_1 = require("../middleware/verification/validators");
 const bcrypt_ts_1 = require("bcrypt-ts");
 const uuid_1 = require("uuid");
 const User_1 = __importDefault(require("../models/User"));
-const EmailTokenVerifier_1 = __importDefault(require("../middleware/EmailTokenVerifier"));
-const UserLoginVerifier_1 = __importDefault(require("../middleware/UserLoginVerifier"));
-const UserTokenVerifier_1 = __importDefault(require("../middleware/UserTokenVerifier"));
+const EmailTokenVerifier_1 = __importDefault(require("../middleware/verification/EmailTokenVerifier"));
+const UserLoginVerifier_1 = __importDefault(require("../middleware/verification/UserLoginVerifier"));
+const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/UserTokenVerifier"));
 const EmailTokenSender_1 = __importDefault(require("../middleware/EmailTokenSender"));
 const usersRouter = (0, express_1.Router)();
-usersRouter.post("/signup", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.post("/signup", validators_1.userRegistrationValidator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newUser = Object.assign(Object.assign({}, req.body), { password: (0, bcrypt_ts_1.hashSync)(req.body.password), emailAuthToken: (0, uuid_1.v4)(), loginAuthToken: null });
-        yield User_1.default.create(newUser);
-        req.body.userData = newUser;
-        next();
+        const check = (0, express_validator_1.validationResult)(req);
+        if (check.isEmpty()) {
+            const newUser = Object.assign(Object.assign({}, req.body), { password: (0, bcrypt_ts_1.hashSync)(req.body.password), emailAuthToken: (0, uuid_1.v4)(), loginAuthToken: null });
+            yield User_1.default.create(newUser);
+            req.body.userData = newUser;
+            next();
+        }
+        else {
+            res.status(400).send("Invalid user input");
+        }
     }
     catch (e) {
         res.status(500).send(e);
     }
 }), EmailTokenSender_1.default);
-usersRouter.get("/auth-email/:token", EmailTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.get("/auth-email/:token", validators_1.emailTokenValidator, EmailTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield User_1.default.findOneAndUpdate({ emailAuthToken: req.params.token }, { emailAuthToken: null, emailVerified: true });
         res.status(200).send("Verification Completed!");
@@ -41,16 +49,20 @@ usersRouter.get("/auth-email/:token", EmailTokenVerifier_1.default, (req, res) =
         res.status(500).send(e);
     }
 }));
-usersRouter.post("/login", UserLoginVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.post("/login", validators_1.userLoginValidator, UserLoginVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield User_1.default.findOneAndUpdate({ username: req.body.username }, { loginAuthToken: (0, uuid_1.v4)() });
-        res.status(200).send("Login Successfully!");
+        const userToken = (0, uuid_1.v4)();
+        yield User_1.default.findOneAndUpdate({ username: req.body.username }, { loginAuthToken: userToken });
+        res.status(200).json({
+            message: "Login Successfull!",
+            userToken: userToken,
+        });
     }
     catch (e) {
         res.status(500).send(e);
     }
 }));
-usersRouter.patch("/user/:id", UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.patch("/user/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
         const userInfo = req.body;

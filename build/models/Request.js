@@ -34,18 +34,9 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const BookSchema = new mongoose_1.Schema({
-    title: { type: String, required: true },
-    author: { type: String, required: true },
-    coverImg: { type: String, default: "" },
-    printYear: { type: Number, required: true },
-    printCompany: { type: String, required: true },
-    genre: { type: String, required: true },
-    condition: { type: String, required: true },
-    description: { type: String, default: "" },
-    status: { type: String, default: "In Vendita" },
-    submitDate: { type: Date, default: () => new Date() },
-    ownerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+const RequestSchema = new mongoose_1.Schema({
+    userRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    bookRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "Book", required: true }
 });
-const Book = mongoose_1.default.model("Book", BookSchema);
-exports.default = Book;
+const Request = mongoose_1.default.model("Request", RequestSchema);
+exports.default = Request;

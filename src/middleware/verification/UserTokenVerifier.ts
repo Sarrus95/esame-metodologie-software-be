@@ -7,7 +7,7 @@ const UserLoginVerifier = async (
   res: Response,
   next: NextFunction
 ) => {
-  const result = validationResult(req.headers);
+  const result = validationResult(req);
   if (result) {
     const authHeader = req.headers.authorization;
     const user = await User.findOne({ accessToken: authHeader });

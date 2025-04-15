@@ -14,7 +14,10 @@ export const emailTokenValidator = [
 
 export const userLoginValidator = [
     body("username").trim().notEmpty().isEmail(),
-    body("password").trim().notEmpty().isString()
+    body("password").trim().notEmpty().isStrongPassword({
+        minLength: 8
+    }
+    )
 ]
 
 export const userTokenValidator = [

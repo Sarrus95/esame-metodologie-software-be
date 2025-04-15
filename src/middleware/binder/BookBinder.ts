@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Book from "../models/Book";
+import Book from "../../models/Book";
 
 const BookBinder = async (req: Request,res: Response,next: NextFunction) => {
     try{

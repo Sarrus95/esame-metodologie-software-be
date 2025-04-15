@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import BookOfInterest from "../models/BookOfInterest";
+import BookOfInterest from "../../models/BookOfInterest";
 
 
 const BookOfInterestBinder = async (req: Request,res: Response,next: NextFunction) => {

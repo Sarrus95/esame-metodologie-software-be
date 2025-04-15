@@ -30,8 +30,8 @@ const EmailTokenSender = async (
         from: "BookShareApp Test <shyrightsmovement@outlook.it>",
         to: `${req.body.userData.email}`,
         subject: "Verify your email",
-        text: `Verify your email, click on the following link:${checkUrl}`,
-        html: `<b>Verify your email, click on the following link:</b> <a href="${checkUrl}">${checkUrl}</a>`,
+        text: `To verify your email,use the following link:${checkUrl}`,
+        html: `<b>To verify your email,use the following link</b> <a href="${checkUrl}">${checkUrl}</a>`,
       });
       if (info) {
         res.status(201).json({

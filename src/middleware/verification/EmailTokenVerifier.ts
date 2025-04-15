@@ -8,8 +8,9 @@ const EmailTokenVerifier = async (
   next: NextFunction
 ) => {
   try {
-    const check = validationResult(req.params);
-    if (check) {
+    const check = validationResult(req);
+    if (check.isEmpty())
+      {
       const result = await User.findOne({
         emailAuthToken: req.params.token,
         emailVerified: false,

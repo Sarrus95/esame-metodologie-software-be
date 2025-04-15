@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const BookOfInterest_1 = __importDefault(require("../models/BookOfInterest"));
-const UserTokenVerifier_1 = __importDefault(require("../middleware/UserTokenVerifier"));
+const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/UserTokenVerifier"));
 const booksOfInterestRouter = (0, express_1.Router)();
 booksOfInterestRouter.post("/add-interest", UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

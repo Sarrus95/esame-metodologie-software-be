@@ -6,7 +6,7 @@ interface IBook extends Document {
   coverImg: string;
   printYear: number;
   printCompany: string;
-  genre: string;
+  genre: genres;
   condition: grading;
   description: string;
   status: status;

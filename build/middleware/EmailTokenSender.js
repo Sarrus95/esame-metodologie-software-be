@@ -35,13 +35,14 @@ const EmailTokenSender = (req, res, next) => __awaiter(void 0, void 0, void 0, f
                 from: "BookShareApp Test <shyrightsmovement@outlook.it>",
                 to: `${req.body.userData.email}`,
                 subject: "Verify your email",
-                text: `Verify your email, click on the following link:${checkUrl}`,
-                html: `<b>Verify your email, click on the following link:</b> <a href="${checkUrl}">${checkUrl}</a>`,
+                text: `To verify your email,use the following link:${checkUrl}`,
+                html: `<b>To verify your email,use the following link</b> <a href="${checkUrl}">${checkUrl}</a>`,
             });
             if (info) {
-                console.log("Message sent: %s", info.messageId);
-                console.log("Preview URL: %s", nodemailer_1.default.getTestMessageUrl(info));
-                res.status(201).send("User created!");
+                res.status(201).json({
+                    message: "User created!",
+                    activationURL: nodemailer_1.default.getTestMessageUrl(info),
+                });
             }
             else {
                 res.status(500).send("Internal Server Error!");

@@ -3,6 +3,7 @@
         "users",
         "routes",
         "auth-email",
-        "EmailTokenSender"
+        "EmailTokenSender",
+        "validators"
     ]
 }

@@ -9,18 +9,21 @@ const UserLoginVerifier = async (
   next: NextFunction
 ) => {
   try {
-    const check = validationResult(req.body);
-    if (check) {
+    const check = validationResult(req);
+    if (check.isEmpty()) {
       const userExists = await User.findOne({
         username: req.body.username,
         emailVerified: true,
       });
+      console.log(userExists);
       if (userExists) {
         const passwordCorrect = compareSync(
           req.body.password,
           userExists.password
         );
+        console.log(userExists);
         if (passwordCorrect) {
+          console.log(passwordCorrect);
           next();
         } else {
           res.status(401).send("Invalid Credentials!");

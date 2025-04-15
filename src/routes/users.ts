@@ -21,8 +21,8 @@ usersRouter.post(
   userRegistrationValidator,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const check = validationResult(req.body);
-      if (check) {
+      const check = validationResult(req);
+      if (check.isEmpty()) {
         const newUser = {
           ...req.body,
           password: hashSync(req.body.password),
@@ -32,6 +32,9 @@ usersRouter.post(
         await User.create(newUser);
         req.body.userData = newUser;
         next();
+      }
+      else{
+        res.status(400).send("Invalid user input");
       }
     } catch (e) {
       res.status(500).send(e);
@@ -63,13 +66,14 @@ usersRouter.post(
   UserLoginVerifier,
   async (req: Request, res: Response) => {
     try {
-      const userInfo = await User.findOneAndUpdate(
+      const userToken = uuidv4(); 
+      await User.findOneAndUpdate(
         { username: req.body.username },
-        { loginAuthToken: uuidv4() }
+        { loginAuthToken: userToken }
       );
       res.status(200).json({
         message: "Login Successfull!",
-        userToken: userInfo?.loginAuthToken,
+        userToken: userToken,
       });
     } catch (e) {
       res.status(500).send(e);

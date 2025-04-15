@@ -5,6 +5,7 @@ interface IBookOfInterest extends Document {
     author: string;
     printYear: number;
     printCompany: string;
+    genre: genres;
     userRef: Schema.Types.ObjectId;
 }
 const BookOfInterestSchema = new Schema<IBookOfInterest>({
