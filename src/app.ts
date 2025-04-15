@@ -10,8 +10,8 @@ const app = express();
 
 app.use(express.json());
 app.use('/users',userRouter);
-app.use("/books/",booksRouter);
-app.use("/books-of-interest/",booksOfInterestRouter)
+app.use("/books",booksRouter);
+app.use("/books-of-interest",booksOfInterestRouter)
 
 app.get('/',(_, res) => { 
     res.send("Server is running!")
