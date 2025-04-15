@@ -36,8 +36,8 @@ usersRouter.post(
       else{
         res.status(400).send("Invalid user input");
       }
-    } catch (e) {
-      res.status(500).send(e);
+    } catch(e) {
+      res.status(500).send("Internal Server Error!");
     }
   },
   EmailTokenSender
@@ -55,7 +55,7 @@ usersRouter.get(
       );
       res.status(200).send("Verification Completed!");
     } catch (e) {
-      res.status(500).send(e);
+      res.status(500).send("In");
     }
   }
 );

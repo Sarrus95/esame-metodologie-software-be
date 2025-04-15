@@ -15,20 +15,18 @@ const UserLoginVerifier = async (
         username: req.body.username,
         emailVerified: true,
       });
-      console.log(userExists);
       if (userExists) {
         const passwordCorrect = compareSync(
           req.body.password,
           userExists.password
         );
-        console.log(userExists);
         if (passwordCorrect) {
-          console.log(passwordCorrect);
           next();
-        } else {
-          res.status(401).send("Invalid Credentials!");
         }
       }
+    }
+    else {
+      res.status(401).send("Invalid Credentials!");
     }
   } catch (e) {
     res.status(500).send(e);

@@ -18,23 +18,22 @@ const express_validator_1 = require("express-validator");
 const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const check = (0, express_validator_1.validationResult)(req);
+        console.log(check);
         if (check.isEmpty()) {
             const userExists = yield User_1.default.findOne({
                 username: req.body.username,
                 emailVerified: true,
             });
-            console.log(userExists);
             if (userExists) {
                 const passwordCorrect = (0, bcrypt_ts_1.compareSync)(req.body.password, userExists.password);
-                console.log(userExists);
                 if (passwordCorrect) {
                     console.log(passwordCorrect);
                     next();
                 }
-                else {
-                    res.status(401).send("Invalid Credentials!");
-                }
             }
+        }
+        else {
+            res.status(404).send("Invalid Credentials!");
         }
     }
     catch (e) {
