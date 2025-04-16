@@ -4,6 +4,7 @@
         "routes",
         "auth-email",
         "EmailTokenSender",
-        "validators"
+        "validators",
+        "UserLoginVerifier"
     ]
 }
