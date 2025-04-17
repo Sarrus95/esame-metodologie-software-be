@@ -13,9 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Book_1 = __importDefault(require("../../models/Book"));
-const BookBinder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const BookBinder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield Book_1.default.findByIdAndUpdate(req.body.userId, { mybook: req.body.bookId });
+        yield Book_1.default.findByIdAndUpdate(req.body.userId, {
+            $push: { mybook: req.body.bookId },
+        });
+        res.status(200).send("Book Added!");
     }
     catch (e) {
         res.status(500).send(e);

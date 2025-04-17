@@ -18,10 +18,9 @@ const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     const result = (0, express_validator_1.validationResult)(req);
     if (result) {
         const authHeader = req.headers.authorization;
-        console.log(authHeader);
-        const user = yield User_1.default.findOne({ accessToken: authHeader });
+        const user = yield User_1.default.findOne({ loginAuthToken: authHeader });
         if (user) {
-            req.body.userId = user._id;
+            req.headers.userId = user._id;
             next();
         }
         else {

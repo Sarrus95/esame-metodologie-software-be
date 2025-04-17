@@ -16,10 +16,20 @@ const express_1 = require("express");
 const Book_1 = __importDefault(require("../models/Book"));
 const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/UserTokenVerifier"));
 const BookBinder_1 = __importDefault(require("../middleware/binder/BookBinder"));
+const validators_1 = require("../middleware/verification/validators");
 const booksRouter = (0, express_1.Router)();
-booksRouter.post("/add-book", UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newBook = Object.assign(Object.assign({}, req.body), { ownerId: req.body.userId });
+        const books = yield Book_1.default.find({});
+        res.status(200).send(books);
+    }
+    catch (e) {
+        res.status(500).send(e);
+    }
+}));
+booksRouter.post("/add-book", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newBook = Object.assign(Object.assign({}, req.body), { ownerId: req.headers.userId });
         const book = yield Book_1.default.create(newBook);
         req.body.bookId = book._id;
         next();

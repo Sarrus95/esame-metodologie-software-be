@@ -1,12 +1,16 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import Book from "../../models/Book";
 
-const BookBinder = async (req: Request,res: Response,next: NextFunction) => {
-    try{
-        await Book.findByIdAndUpdate(req.body.userId,{mybook: req.body.bookId})
-    }catch(e){
-        res.status(500).send(e);
-    }
-}
+const BookBinder = async (req: Request, res: Response) => {
+  try {
+    await Book.findByIdAndUpdate(req.body.userId, {
+      $push: { mybook: req.body.bookId },
+    });
+
+    res.status(200).send("Book Added!");
+  } catch (e) {
+    res.status(500).send(e);
+  }
+};
 
 export default BookBinder;

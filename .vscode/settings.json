@@ -5,6 +5,7 @@
         "auth-email",
         "EmailTokenSender",
         "validators",
-        "UserLoginVerifier"
+        "UserLoginVerifier",
+        "books"
     ]
 }
