@@ -7,6 +7,7 @@ interface IBook extends Document {
   printYear: number;
   printCompany: string;
   genre: genres;
+  language: language;
   condition: grading;
   description: string;
   status: status;
@@ -20,9 +21,10 @@ const BookSchema = new Schema<IBook>({
   printYear: { type: Number, required: true },
   printCompany: { type: String, required: true },
   genre: { type: String, required: true },
+  language: { type: String, required: true },
   condition: { type: String, required: true },
   description: { type: String, default: "" },
-  status: { type: String, default: "In Vendita" },
+  status: { type: String, default: "In Attesa Di Scambio" },
   submitDate: { type: Date, default: () => new Date() },
   ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });

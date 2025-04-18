@@ -61,14 +61,14 @@ usersRouter.post(
   UserLoginVerifier,
   async (req: Request, res: Response) => {
     try {
-      const userToken = uuidv4();
+      const loginAuthToken = uuidv4();
       await User.findOneAndUpdate(
         { username: req.body.username },
-        { loginAuthToken: userToken }
+        { loginAuthToken: loginAuthToken }
       );
       res.status(200).json({
         message: "Login Successfull!",
-        userToken: userToken,
+        loginAuthToken: loginAuthToken,
       });
     } catch (e) {
       res.status(500).send(e);
@@ -76,7 +76,7 @@ usersRouter.post(
   }
 );
 
-usersRouter.patch(
+usersRouter.put(
   "/user/:id",
   userTokenValidator,
   UserTokenVerifier,

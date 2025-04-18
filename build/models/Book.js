@@ -41,9 +41,10 @@ const BookSchema = new mongoose_1.Schema({
     printYear: { type: Number, required: true },
     printCompany: { type: String, required: true },
     genre: { type: String, required: true },
+    language: { type: String, required: true },
     condition: { type: String, required: true },
     description: { type: String, default: "" },
-    status: { type: String, default: "In Vendita" },
+    status: { type: String, default: "In Attesa Di Scambio" },
     submitDate: { type: Date, default: () => new Date() },
     ownerId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
 });

@@ -45,18 +45,18 @@ usersRouter.get("/auth-email/:token", validators_1.emailTokenValidator, EmailTok
 }));
 usersRouter.post("/login", validators_1.userLoginValidator, UserLoginVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userToken = (0, uuid_1.v4)();
-        yield User_1.default.findOneAndUpdate({ username: req.body.username }, { loginAuthToken: userToken });
+        const loginAuthToken = (0, uuid_1.v4)();
+        yield User_1.default.findOneAndUpdate({ username: req.body.username }, { loginAuthToken: loginAuthToken });
         res.status(200).json({
             message: "Login Successfull!",
-            userToken: userToken,
+            loginAuthToken: loginAuthToken,
         });
     }
     catch (e) {
         res.status(500).send(e);
     }
 }));
-usersRouter.patch("/user/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.put("/user/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
         const userInfo = req.body;

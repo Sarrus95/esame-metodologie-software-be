@@ -3,17 +3,28 @@ import Book from "../models/Book";
 import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
 import BookBinder from "../middleware/binder/BookBinder";
 import { userTokenValidator } from "../middleware/verification/validators";
+import Filter from "../types/filterInterface";
 
 const booksRouter = Router();
 
-booksRouter.get("/", async (_, res) => {
-  try{
-    const books = await Book.find({});
-    res.status(200).send(books);
-  } catch(e){
-    res.status(500).send(e);
+booksRouter.get(
+  "/",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const {genre, condition, language} = req.query;
+      const filters: Filter = {status:"In Attesa Di Scambio"};
+      if(genre) filters.genre = genre as string;
+      if(condition) filters.condition = condition as string; 
+      if(language) filters.language = language as string;
+      const books = await Book.find(filters);
+      res.status(200).json(books);
+    } catch (e) {
+      res.status(500).send(e);
+    }
   }
-})
+)
 
 booksRouter.post(
   "/add-book",
@@ -35,15 +46,20 @@ booksRouter.post(
   BookBinder
 );
 
-booksRouter.patch("/book/:id", UserTokenVerifier, async (req, res) => {
-  try {
-    const bookId = req.params.id;
-    const bookInfo = req.body;
-    await Book.findByIdAndUpdate(bookId, bookInfo);
-    res.status(204).send("Book info successfully updated!");
-  } catch (e) {
-    res.status(500).send(e);
+booksRouter.put(
+  "/book/:id",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const bookId = req.params.id;
+      const bookInfo = req.body;
+      await Book.findByIdAndUpdate(bookId, bookInfo);
+      res.status(204).send("Book info successfully updated!");
+    } catch (e) {
+      res.status(500).send(e);
+    }
   }
-});
+);
 
 export default booksRouter;

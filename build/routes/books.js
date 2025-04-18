@@ -18,10 +18,18 @@ const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/
 const BookBinder_1 = __importDefault(require("../middleware/binder/BookBinder"));
 const validators_1 = require("../middleware/verification/validators");
 const booksRouter = (0, express_1.Router)();
-booksRouter.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.get("/", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const books = yield Book_1.default.find({});
-        res.status(200).send(books);
+        const { genre, condition, language } = req.query;
+        const filters = { status: "In Attesa Di Scambio" };
+        if (genre)
+            filters.genre = genre;
+        if (condition)
+            filters.condition = condition;
+        if (language)
+            filters.language = language;
+        const books = yield Book_1.default.find(filters);
+        res.status(200).json(books);
     }
     catch (e) {
         res.status(500).send(e);
@@ -38,7 +46,7 @@ booksRouter.post("/add-book", validators_1.userTokenValidator, UserTokenVerifier
         res.status(500).send(e);
     }
 }), BookBinder_1.default);
-booksRouter.patch("/book/:id", UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksRouter.put("/book/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.id;
         const bookInfo = req.body;

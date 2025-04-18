@@ -1,5 +1,27 @@
-type grading = "Mint" | "Near Mint" | "Very Good Plus" | "Very Good" | "Good" | "Bad";
+type grading = "Nuovo" | "Semi-Nuovo" | "Discreto" | "Rovinato";
 
-type status = "In Vendita" | "Scambio In Corso" | "Scambio Accettato";
+type status = "In Attesa Di Scambio" | "Scambio In Corso" | "Scambio Accettato";
 
-type genres= "Azione" | "Avventura" | "Thriller" | "Romance" | "Fantasy" | "Fantascienza" | "Horror" | "Epica" | "Classico"
+type language = "Italiano" | "Inglese" | "Francese" | "Tedesco" | "Spagnolo";
+
+type genres =
+  | "Fantasy"
+  | "Thriller"
+  | "Romance"
+  | "Azione"
+  | "Avventura"
+  | "Fantascienza"
+  | "Horror"
+  | "Epica"
+  | "Classico"
+  | "Storico"
+  | "Biografia"
+  | "Mistero"
+  | "Commedia"
+  | "Drammatico"
+  | "Giallo"
+  | "Distopico"
+  | "Spirituale"
+  | "Avventura urbana"
+  | "Saggio"
+  | "Narrativa contemporanea";
