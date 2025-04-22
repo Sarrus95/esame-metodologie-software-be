@@ -16,11 +16,11 @@ const User_1 = __importDefault(require("../../models/User"));
 const express_validator_1 = require("express-validator");
 const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const result = (0, express_validator_1.validationResult)(req);
-    if (result) {
+    if (result.isEmpty()) {
         const authHeader = req.headers.authorization;
         const user = yield User_1.default.findOne({ loginAuthToken: authHeader });
+        console.log(user);
         if (user) {
-            req.headers.userId = user._id;
             next();
         }
         else {

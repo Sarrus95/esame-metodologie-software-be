@@ -12,7 +12,7 @@ exports.emailTokenValidator = [
     (0, express_validator_1.param)("token").trim().isUUID()
 ];
 exports.userLoginValidator = [
-    (0, express_validator_1.body)("username").trim().notEmpty().isString(),
+    (0, express_validator_1.body)("email").trim().notEmpty().isEmail(),
     (0, express_validator_1.body)("password").trim().notEmpty().isStrongPassword({
         minLength: 8
     })

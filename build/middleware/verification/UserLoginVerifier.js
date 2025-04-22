@@ -22,7 +22,7 @@ const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             res.status(401).send("Invalid Credentials!");
         }
         const userExists = yield User_1.default.findOne({
-            username: req.body.username,
+            email: req.body.email,
             emailVerified: true,
         });
         if (!userExists) {

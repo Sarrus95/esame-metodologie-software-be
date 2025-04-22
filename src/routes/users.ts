@@ -62,14 +62,37 @@ usersRouter.post(
   async (req: Request, res: Response) => {
     try {
       const loginAuthToken = uuidv4();
-      await User.findOneAndUpdate(
-        { username: req.body.username },
+      const userData = await User.findOneAndUpdate(
+        { email: req.body.email },
         { loginAuthToken: loginAuthToken }
       );
-      res.status(200).json({
-        message: "Login Successfull!",
-        loginAuthToken: loginAuthToken,
-      });
+      if(userData) {
+        res.status(200).json({
+          message: "Login Successfull!",
+          loginAuthToken: loginAuthToken,
+          userId: userData._id
+        });
+      }
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  }
+);
+
+usersRouter.get(
+  "/:id",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.id;
+      const userInfo = await User.findById(userId);
+      if(userInfo){
+        res.status(200).json({
+          username: userInfo.username,
+          phoneNo: userInfo.phoneNo,
+        });
+      }
     } catch (e) {
       res.status(500).send(e);
     }
@@ -77,7 +100,7 @@ usersRouter.post(
 );
 
 usersRouter.put(
-  "/user/:id",
+  "/:id",
   userTokenValidator,
   UserTokenVerifier,
   async (req: Request, res: Response) => {

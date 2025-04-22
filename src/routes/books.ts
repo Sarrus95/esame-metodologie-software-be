@@ -13,18 +13,32 @@ booksRouter.get(
   UserTokenVerifier,
   async (req: Request, res: Response) => {
     try {
-      const {genre, condition, language} = req.query;
-      const filters: Filter = {status:"In Attesa Di Scambio"};
-      if(genre) filters.genre = genre as string;
-      if(condition) filters.condition = condition as string; 
-      if(language) filters.language = language as string;
-      const books = await Book.find(filters);
+      const { genre, condition, language, search } = req.query;
+      const filters: Filter = { status: "In Attesa Di Scambio" };
+
+      if (genre) filters.genre = genre as string;
+      if (condition) filters.condition = condition as string;
+      if (language) filters.language = language as string;
+
+      let books;
+      if (search) {
+        books = await Book.find({
+          ...filters,
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { author: { $regex: search, $options: "i" } }
+          ]
+        });
+      } else {
+        books = await Book.find(filters);
+      }
+
       res.status(200).json(books);
     } catch (e) {
       res.status(500).send(e);
     }
   }
-)
+);
 
 booksRouter.post(
   "/add-book",

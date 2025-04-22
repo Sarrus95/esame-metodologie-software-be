@@ -14,7 +14,7 @@ const UserLoginVerifier = async (
       res.status(401).send("Invalid Credentials!");
     }
     const userExists = await User.findOne({
-      username: req.body.username,
+      email: req.body.email,
       emailVerified: true,
     });
     if (!userExists) {

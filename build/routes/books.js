@@ -20,7 +20,7 @@ const validators_1 = require("../middleware/verification/validators");
 const booksRouter = (0, express_1.Router)();
 booksRouter.get("/", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { genre, condition, language } = req.query;
+        const { genre, condition, language, search } = req.query;
         const filters = { status: "In Attesa Di Scambio" };
         if (genre)
             filters.genre = genre;
@@ -28,7 +28,16 @@ booksRouter.get("/", validators_1.userTokenValidator, UserTokenVerifier_1.defaul
             filters.condition = condition;
         if (language)
             filters.language = language;
-        const books = yield Book_1.default.find(filters);
+        let books;
+        if (search) {
+            books = yield Book_1.default.find(Object.assign(Object.assign({}, filters), { $or: [
+                    { title: { $regex: search, $options: "i" } },
+                    { author: { $regex: search, $options: "i" } }
+                ] }));
+        }
+        else {
+            books = yield Book_1.default.find(filters);
+        }
         res.status(200).json(books);
     }
     catch (e) {

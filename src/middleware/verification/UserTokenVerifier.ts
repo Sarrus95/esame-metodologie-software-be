@@ -8,11 +8,11 @@ const UserLoginVerifier = async (
   next: NextFunction
 ) => {
   const result = validationResult(req);
-  if (result) {
+  if (result.isEmpty()) {
     const authHeader = req.headers.authorization;
     const user = await User.findOne({ loginAuthToken: authHeader });
+    console.log(user);
     if (user) {
-      req.headers.userId = user._id as string;
       next();
     } else {
       res.status(401).send("Invalid token!");
