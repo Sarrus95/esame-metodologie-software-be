@@ -35,12 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const UserSchema = new mongoose_1.Schema({
-    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     emailAuthToken: { type: String },
     emailVerified: { type: Boolean, default: false },
     loginAuthToken: { type: String },
+    username: { type: String, unique: true },
     phoneNo: { type: String },
     booksOfInterest: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookOfInterest" }],
     myBooks: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Book" }],
