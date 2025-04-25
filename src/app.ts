@@ -11,13 +11,13 @@ const app = express();
 
 app.use(cors({
     origin: "http://localhost:4200",
-    methods: ["GET", "POST", "PUT","DELETE"],
+    methods: ["GET", "POST", "PUT" ,"PATCH","DELETE"],
     credentials: true
 }))
 app.use(express.json());
 app.use('/users',userRouter);
 app.use("/books",booksRouter);
-app.use("/books-of-interest",booksOfInterestRouter)
+app.use("/interest",booksOfInterestRouter)
 
 app.get('/',(_, res) => { 
     res.send("Server is running!")

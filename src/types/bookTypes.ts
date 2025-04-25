@@ -1,4 +1,4 @@
-type grading = "Nuovo" | "Semi-Nuovo" | "Discreto" | "Rovinato";
+type grading = "Nuovo" | "Come Nuovo" | "Buone Condizioni" | "Rovinato";
 
 type status = "In Attesa Di Scambio" | "Scambio In Corso" | "Scambio Accettato";
 

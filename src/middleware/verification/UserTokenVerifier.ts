@@ -11,7 +11,6 @@ const UserLoginVerifier = async (
   if (result.isEmpty()) {
     const authHeader = req.headers.authorization;
     const user = await User.findOne({ loginAuthToken: authHeader });
-    console.log(user);
     if (user) {
       next();
     } else {

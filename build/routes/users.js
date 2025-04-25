@@ -74,7 +74,7 @@ usersRouter.get("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.def
         res.status(500).send(e);
     }
 }));
-usersRouter.put("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
         const userInfo = req.body;
@@ -83,6 +83,20 @@ usersRouter.put("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.def
     }
     catch (e) {
         res.status(500).send(e);
+    }
+}));
+usersRouter.get("/:id/my-books", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id;
+        const userInfo = yield User_1.default.findById(userId).populate("myBooks");
+        if (userInfo) {
+            res.status(200).json({
+                myBooks: userInfo.myBooks
+            });
+        }
+    }
+    catch (e) {
+        res.status(500).json(e);
     }
 }));
 exports.default = usersRouter;

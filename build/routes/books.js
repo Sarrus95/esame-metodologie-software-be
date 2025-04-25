@@ -46,9 +46,10 @@ booksRouter.get("/", validators_1.userTokenValidator, UserTokenVerifier_1.defaul
 }));
 booksRouter.post("/add-book", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newBook = Object.assign(Object.assign({}, req.body), { ownerId: req.headers.userId });
+        const newBook = req.body;
         const book = yield Book_1.default.create(newBook);
-        req.body.bookId = book._id;
+        req.headers["userId"] = newBook.ownerId;
+        req.headers["bookId"] = book.id.toString();
         next();
     }
     catch (e) {

@@ -46,12 +46,10 @@ booksRouter.post(
   UserTokenVerifier,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newBook = {
-        ...req.body,
-        ownerId: req.headers.userId,
-      };
+      const newBook = req.body;
       const book = await Book.create(newBook);
-      req.body.bookId = book._id;
+      req.headers["userId"] = newBook.ownerId;
+      req.headers["bookId"] = book.id.toString();
       next();
     } catch (e) {
       res.status(500).send(e);

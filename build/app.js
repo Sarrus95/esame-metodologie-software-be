@@ -14,13 +14,13 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: "http://localhost:4200",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }));
 app.use(express_1.default.json());
 app.use('/users', users_1.default);
 app.use("/books", books_1.default);
-app.use("/books-of-interest", booksOfInterest_1.default);
+app.use("/interest", booksOfInterest_1.default);
 app.get('/', (_, res) => {
     res.send("Server is running!");
 });

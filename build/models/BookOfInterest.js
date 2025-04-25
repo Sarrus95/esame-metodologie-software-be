@@ -38,7 +38,7 @@ const BookOfInterestSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     printYear: { type: Number },
     printCompany: { type: String },
-    userRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true }
+    userRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
 });
 const BookOfInterest = mongoose_1.default.model("BookOfInteres", BookOfInterestSchema);
 exports.default = BookOfInterest;

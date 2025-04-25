@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import Book from "../../models/Book";
+import User from "../../models/User";
 
 const BookBinder = async (req: Request, res: Response) => {
   try {
-    await Book.findByIdAndUpdate(req.body.userId, {
-      $push: { mybook: req.body.bookId },
+    await User.findByIdAndUpdate(req.headers.userId, {
+      $push: { myBooks: req.headers.bookId },
     });
-
     res.status(200).send("Book Added!");
   } catch (e) {
     res.status(500).send(e);

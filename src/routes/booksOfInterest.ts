@@ -17,7 +17,7 @@ booksOfInterestRouter.post("/add-interest",UserTokenVerifier, async (req, res) =
   }
 });
 
-booksOfInterestRouter.put("/interest/:id",UserTokenVerifier,async (req,res) => {
+booksOfInterestRouter.put("/:id",UserTokenVerifier,async (req,res) => {
   try{
     const interestId = req.params.id;
     const interestInfo = req.body;

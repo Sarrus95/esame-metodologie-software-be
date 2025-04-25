@@ -19,7 +19,6 @@ const UserLoginVerifier = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     if (result.isEmpty()) {
         const authHeader = req.headers.authorization;
         const user = yield User_1.default.findOne({ loginAuthToken: authHeader });
-        console.log(user);
         if (user) {
             next();
         }

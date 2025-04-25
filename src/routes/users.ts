@@ -66,7 +66,7 @@ usersRouter.post(
         { email: req.body.email },
         { loginAuthToken: loginAuthToken }
       );
-      if(userData) {
+      if (userData) {
         res.status(200).json({
           message: "Login Successfull!",
           loginAuthToken: loginAuthToken,
@@ -87,7 +87,7 @@ usersRouter.get(
     try {
       const userId = req.params.id;
       const userInfo = await User.findById(userId);
-      if(userInfo){
+      if (userInfo) {
         res.status(200).json({
           username: userInfo.username,
           phoneNo: userInfo.phoneNo,
@@ -99,7 +99,7 @@ usersRouter.get(
   }
 );
 
-usersRouter.put(
+usersRouter.patch(
   "/:id",
   userTokenValidator,
   UserTokenVerifier,
@@ -114,5 +114,22 @@ usersRouter.put(
     }
   }
 );
+
+usersRouter.get("/:id/my-books",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.id;
+      const userInfo = await User.findById(userId).populate("myBooks");
+      if (userInfo) {
+        res.status(200).json({
+          myBooks: userInfo.myBooks
+        });
+      }
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  });
 
 export default usersRouter;
