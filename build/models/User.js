@@ -40,10 +40,12 @@ const UserSchema = new mongoose_1.Schema({
     emailAuthToken: { type: String },
     emailVerified: { type: Boolean, default: false },
     loginAuthToken: { type: String },
-    username: { type: String, unique: true },
+    username: { type: String },
     phoneNo: { type: String },
     booksOfInterest: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookOfInterest" }],
     myBooks: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Book" }],
+    sentRequests: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookRequest" }],
+    receivedRequests: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookRequest" }],
 });
 const User = mongoose_1.default.model("User", UserSchema);
 exports.default = User;

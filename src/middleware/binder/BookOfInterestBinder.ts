@@ -1,13 +1,15 @@
-import { Request, Response, NextFunction } from "express";
-import BookOfInterest from "../../models/BookOfInterest";
+import { Request, Response } from "express";
+import User from "../../models/User";
 
-
-const BookOfInterestBinder = async (req: Request,res: Response,next: NextFunction) => {
-    try{
-        await BookOfInterest.findByIdAndUpdate(req.body.userId,{booksOfInterest: req.body.bookId})
-    }catch(e){
-        res.status(500).send(e);
-    }
-}
+const BookOfInterestBinder = async (req: Request, res: Response) => {
+  try {
+    await User.findByIdAndUpdate(req.headers.userId, {
+      $push: { booksOfInterest: req.headers.bookId },
+    });
+    res.status(200).send("Book Of Interest Added!");
+  } catch (e) {
+    res.status(500).send(e);
+  }
+};
 
 export default BookOfInterestBinder;

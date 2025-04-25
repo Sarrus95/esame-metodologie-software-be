@@ -31,7 +31,7 @@ usersRouter.post("/signup", validators_1.userRegistrationValidator, UserSignupVe
         next();
     }
     catch (e) {
-        res.status(500).send("Internal Server Error!");
+        res.status(500).send(e);
     }
 }), EmailTokenSender_1.default);
 usersRouter.get("/auth-email/:token", validators_1.emailTokenValidator, EmailTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,7 +40,7 @@ usersRouter.get("/auth-email/:token", validators_1.emailTokenValidator, EmailTok
         res.status(200).send("Verification Completed!");
     }
     catch (e) {
-        res.status(500).send("In");
+        res.status(500).send(e);
     }
 }));
 usersRouter.post("/login", validators_1.userLoginValidator, UserLoginVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -51,22 +51,9 @@ usersRouter.post("/login", validators_1.userLoginValidator, UserLoginVerifier_1.
             res.status(200).json({
                 message: "Login Successfull!",
                 loginAuthToken: loginAuthToken,
-                userId: userData._id
-            });
-        }
-    }
-    catch (e) {
-        res.status(500).send(e);
-    }
-}));
-usersRouter.get("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const userId = req.params.id;
-        const userInfo = yield User_1.default.findById(userId);
-        if (userInfo) {
-            res.status(200).json({
-                username: userInfo.username,
-                phoneNo: userInfo.phoneNo,
+                userId: userData._id,
+                username: userData.username || "",
+                phoneNo: userData.phoneNo || ""
             });
         }
     }
@@ -91,12 +78,26 @@ usersRouter.get("/:id/my-books", validators_1.userTokenValidator, UserTokenVerif
         const userInfo = yield User_1.default.findById(userId).populate("myBooks");
         if (userInfo) {
             res.status(200).json({
-                myBooks: userInfo.myBooks
+                myBooks: userInfo.myBooks,
             });
         }
     }
     catch (e) {
-        res.status(500).json(e);
+        res.status(500).send(e);
+    }
+}));
+usersRouter.get("/:id/my-interests", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id;
+        const userInfo = yield User_1.default.findById(userId).populate("booksOfInterest");
+        if (userInfo) {
+            res.status(200).json({
+                booksOfInterest: userInfo.booksOfInterest,
+            });
+        }
+    }
+    catch (e) {
+        res.status(500).send(e.message);
     }
 }));
 exports.default = usersRouter;

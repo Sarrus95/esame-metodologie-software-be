@@ -20,10 +20,12 @@ const UserSchema = new Schema<IUser>(
     emailAuthToken: { type: String },
     emailVerified: { type: Boolean, default: false},
     loginAuthToken: { type: String },
-    username: { type: String,unique: true},
+    username: { type: String },
     phoneNo: { type: String },
     booksOfInterest: [{ type: Schema.Types.ObjectId, ref: "BookOfInterest" }],
     myBooks: [{ type: Schema.Types.ObjectId, ref:"Book"}],
+    sentRequests: [{ type: Schema.Types.ObjectId, ref:"BookRequest"}],
+    receivedRequests: [{ type: Schema.Types.ObjectId, ref:"BookRequest"}],
   },
 );
 const User = mongoose.model<IUser>("User", UserSchema);

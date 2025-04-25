@@ -12,16 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const User_1 = __importDefault(require("../../models/User"));
-const BookOfInterestBinder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const Book_1 = __importDefault(require("../models/Book"));
+const BookUpdater = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield User_1.default.findByIdAndUpdate(req.headers.userId, {
-            $push: { booksOfInterest: req.headers.bookId },
-        });
-        res.status(200).send("Book Of Interest Added!");
+        const { bookRefId, proposedBookId, status } = req.body.books;
+        yield Book_1.default.updateMany({ _id: { $in: [bookRefId, proposedBookId] } }, { $set: { status: status } });
+        if (status === "Scambio Accettato") {
+            const userPhoneNo = req.body.phoneno;
+            res.status(200).json({
+                message: "Scambio Accettato!",
+                phoneNo: userPhoneNo,
+            });
+        }
+        else {
+            res.status(200).send("Scambio Rifiutato!");
+        }
     }
     catch (e) {
         res.status(500).send(e);
     }
 });
-exports.default = BookOfInterestBinder;
+exports.default = BookUpdater;

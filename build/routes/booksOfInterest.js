@@ -15,17 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const BookOfInterest_1 = __importDefault(require("../models/BookOfInterest"));
 const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/UserTokenVerifier"));
+const validators_1 = require("../middleware/verification/validators");
+const BookOfInterestBinder_1 = __importDefault(require("../middleware/binder/BookOfInterestBinder"));
 const booksOfInterestRouter = (0, express_1.Router)();
-booksOfInterestRouter.post("/add-interest", UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+booksOfInterestRouter.post("/add-interest", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newBookOfInterest = Object.assign(Object.assign({}, req.body), { ownerId: req.body.userId });
-        yield BookOfInterest_1.default.create(newBookOfInterest);
-        res.status(201).send("Book of interest created!");
+        const newBookOfInterest = req.body;
+        const bookOfInterest = yield BookOfInterest_1.default.create(newBookOfInterest);
+        req.headers["userId"] = newBookOfInterest.userRef;
+        req.headers["bookId"] = bookOfInterest.id.toString();
+        next();
     }
     catch (e) {
         res.status(500).send(e);
     }
-}));
+}), BookOfInterestBinder_1.default);
 booksOfInterestRouter.put("/:id", UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const interestId = req.params.id;

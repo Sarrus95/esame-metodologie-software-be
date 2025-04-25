@@ -14,11 +14,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const User_1 = __importDefault(require("../models/User"));
-const Request_1 = __importDefault(require("../models/Request"));
-const requestsRouter = (0, express_1.Router)();
-requestsRouter.post("send-request/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findByIdAndUpdate(req.body.userRef, {
-        receivedRequests: yield Request_1.default.create(req.body.receivedRequests),
-    });
-}));
-exports.default = requestsRouter;
+const BookRequest_1 = __importDefault(require("../models/BookRequest"));
+const validators_1 = require("../middleware/verification/validators");
+const BookUpdater_1 = __importDefault(require("../middleware/BookUpdater"));
+const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/UserTokenVerifier"));
+const bookRequestsRouter = (0, express_1.Router)();
+bookRequestsRouter.post("/send-request", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const sendingUserId = req.headers.userid;
+        const request = yield BookRequest_1.default.create(req.body);
+        yield User_1.default.findByIdAndUpdate(request.userRef, {
+            $push: { receivedRequests: request },
+        });
+        yield User_1.default.findByIdAndUpdate(sendingUserId, {
+            $push: { sentRequests: request },
+        });
+        req.body.books = {
+            bookRefId: request.bookRef.toString(),
+            proposedBookId: request.proposedBook.toString(),
+            status: "Scambio In Corso",
+        };
+        next();
+    }
+    catch (e) {
+        res.status(500).send(e);
+    }
+}), BookUpdater_1.default);
+bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const requestId = req.params.id;
+        const requestAccepted = req.headers.requestresponse;
+        const { bookRef, proposedBook } = req.body;
+        req.body.books = {
+            bookRefId: bookRef,
+            proposedBookId: proposedBook,
+        };
+        console.log(requestAccepted);
+        if (requestAccepted === "true") {
+            yield BookRequest_1.default.findByIdAndUpdate(requestId, { status: "Accettata" });
+            req.body.books.status = "Scambio Accettato";
+        }
+        else {
+            yield BookRequest_1.default.findByIdAndUpdate(requestId, { status: "Rifutata" });
+            req.body.books.status = "In Attesa Di Scambio";
+        }
+        console.log(req.body.books);
+        next();
+    }
+    catch (e) {
+        res.status(500).send(e);
+    }
+}), BookUpdater_1.default);
+exports.default = bookRequestsRouter;

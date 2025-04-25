@@ -13,6 +13,7 @@ import UserLoginVerifier from "../middleware/verification/UserLoginVerifier";
 import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
 import UserSignupVerifier from "../middleware/verification/UserSignupVerifier";
 import EmailTokenSender from "../middleware/EmailTokenSender";
+import { isMarkedAsUntransferable } from "node:worker_threads";
 
 const usersRouter = Router();
 
@@ -32,7 +33,7 @@ usersRouter.post(
       req.body.userData = newUser;
       next();
     } catch (e) {
-      res.status(500).send("Internal Server Error!");
+      res.status(500).send(e);
     }
   },
   EmailTokenSender
@@ -50,7 +51,7 @@ usersRouter.get(
       );
       res.status(200).send("Verification Completed!");
     } catch (e) {
-      res.status(500).send("In");
+      res.status(500).send(e);
     }
   }
 );
@@ -70,27 +71,9 @@ usersRouter.post(
         res.status(200).json({
           message: "Login Successfull!",
           loginAuthToken: loginAuthToken,
-          userId: userData._id
-        });
-      }
-    } catch (e) {
-      res.status(500).send(e);
-    }
-  }
-);
-
-usersRouter.get(
-  "/:id",
-  userTokenValidator,
-  UserTokenVerifier,
-  async (req: Request, res: Response) => {
-    try {
-      const userId = req.params.id;
-      const userInfo = await User.findById(userId);
-      if (userInfo) {
-        res.status(200).json({
-          username: userInfo.username,
-          phoneNo: userInfo.phoneNo,
+          userId: userData._id,
+          username: userData.username || "",
+          phoneNo: userData.phoneNo || ""
         });
       }
     } catch (e) {
@@ -115,7 +98,8 @@ usersRouter.patch(
   }
 );
 
-usersRouter.get("/:id/my-books",
+usersRouter.get(
+  "/:id/my-books",
   userTokenValidator,
   UserTokenVerifier,
   async (req: Request, res: Response) => {
@@ -124,12 +108,32 @@ usersRouter.get("/:id/my-books",
       const userInfo = await User.findById(userId).populate("myBooks");
       if (userInfo) {
         res.status(200).json({
-          myBooks: userInfo.myBooks
+          myBooks: userInfo.myBooks,
         });
       }
     } catch (e) {
-      res.status(500).json(e);
+      res.status(500).send(e);
     }
-  });
+  }
+);
+
+usersRouter.get(
+  "/:id/my-interests",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.id;
+      const userInfo = await User.findById(userId).populate("booksOfInterest");
+      if (userInfo) {
+        res.status(200).json({
+          booksOfInterest: userInfo.booksOfInterest,
+        });
+      }
+    } catch (e: any) {
+      res.status(500).send(e.message);
+    }
+  }
+);
 
 export default usersRouter;

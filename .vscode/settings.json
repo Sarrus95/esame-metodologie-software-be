@@ -6,6 +6,7 @@
         "EmailTokenSender",
         "validators",
         "UserLoginVerifier",
-        "books"
+        "books",
+        "requests"
     ]
 }

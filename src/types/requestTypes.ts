@@ -1,0 +1,1 @@
+type requests = "In Corso" | "Accettata" | "Rifiutata";
