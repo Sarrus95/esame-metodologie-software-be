@@ -12,6 +12,7 @@ interface IUser extends Document {
     myBooks: Schema.Types.ObjectId[];
     sentRequests: Schema.Types.ObjectId[];
     receivedRequests: Schema.Types.ObjectId[];
+    storedRequests: Schema.Types.ObjectId[];
 }
 const UserSchema = new Schema<IUser>(
   {
@@ -26,6 +27,7 @@ const UserSchema = new Schema<IUser>(
     myBooks: [{ type: Schema.Types.ObjectId, ref:"Book"}],
     sentRequests: [{ type: Schema.Types.ObjectId, ref:"BookRequest"}],
     receivedRequests: [{ type: Schema.Types.ObjectId, ref:"BookRequest"}],
+    storedRequests: [{ type: Schema.Types.ObjectId, ref:"BookRequest"}]
   },
 );
 const User = mongoose.model<IUser>("User", UserSchema);

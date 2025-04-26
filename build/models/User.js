@@ -46,6 +46,7 @@ const UserSchema = new mongoose_1.Schema({
     myBooks: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Book" }],
     sentRequests: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookRequest" }],
     receivedRequests: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookRequest" }],
+    storedRequests: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "BookRequest" }]
 });
 const User = mongoose_1.default.model("User", UserSchema);
 exports.default = User;

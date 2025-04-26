@@ -53,7 +53,7 @@ usersRouter.post("/login", validators_1.userLoginValidator, UserLoginVerifier_1.
                 loginAuthToken: loginAuthToken,
                 userId: userData._id,
                 username: userData.username || "",
-                phoneNo: userData.phoneNo || ""
+                phoneNo: userData.phoneNo || "",
             });
         }
     }
@@ -98,6 +98,49 @@ usersRouter.get("/:id/my-interests", validators_1.userTokenValidator, UserTokenV
     }
     catch (e) {
         res.status(500).send(e.message);
+    }
+}));
+usersRouter.get("/:id/my-requests", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id;
+        const userInfo = yield User_1.default.findById(userId)
+            .populate({
+            path: "sentRequests",
+            populate: [
+                { path: "userRef", select: "username" },
+                { path: "bookRef", select: "title" },
+                { path: "senderRef", select: "username" },
+                { path: "senderBook", select: "title" },
+            ],
+        })
+            .populate({
+            path: "receivedRequests",
+            populate: [
+                { path: "userRef", select: "username" },
+                { path: "bookRef", select: "title" },
+                { path: "senderRef", select: "username" },
+                { path: "senderBook", select: "title" },
+            ],
+        })
+            .populate({
+            path: "storedRequests",
+            populate: [
+                { path: "userRef", select: "username" },
+                { path: "bookRef", select: "title" },
+                { path: "senderRef", select: "username" },
+                { path: "senderBook", select: "title" },
+            ],
+        });
+        if (userInfo) {
+            res.status(200).json({
+                sentRequests: userInfo.sentRequests,
+                receivedRequests: userInfo.receivedRequests,
+                storedRequests: userInfo.storedRequests,
+            });
+        }
+    }
+    catch (e) {
+        res.status(500).send(e);
     }
 }));
 exports.default = usersRouter;

@@ -21,23 +21,22 @@ const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/
 const bookRequestsRouter = (0, express_1.Router)();
 bookRequestsRouter.post("/send-request", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const sendingUserId = req.headers.userid;
         const request = yield BookRequest_1.default.create(req.body);
         yield User_1.default.findByIdAndUpdate(request.userRef, {
             $push: { receivedRequests: request },
         });
-        yield User_1.default.findByIdAndUpdate(sendingUserId, {
+        yield User_1.default.findByIdAndUpdate(request.senderRef, {
             $push: { sentRequests: request },
         });
         req.body.books = {
             bookRefId: request.bookRef.toString(),
-            proposedBookId: request.proposedBook.toString(),
+            proposedBookId: request.senderBook.toString(),
             status: "Scambio In Corso",
         };
         next();
     }
     catch (e) {
-        res.status(500).send(e);
+        res.status(500).send(e.message);
     }
 }), BookUpdater_1.default);
 bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -49,16 +48,20 @@ bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerif
             bookRefId: bookRef,
             proposedBookId: proposedBook,
         };
-        console.log(requestAccepted);
         if (requestAccepted === "true") {
-            yield BookRequest_1.default.findByIdAndUpdate(requestId, { status: "Accettata" });
+            const request = yield BookRequest_1.default.findByIdAndUpdate(requestId, {
+                status: "Accettata",
+            }, { new: true });
+            yield User_1.default.updateMany({ _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } }, { $push: { storedRequests: request } });
             req.body.books.status = "Scambio Accettato";
         }
         else {
-            yield BookRequest_1.default.findByIdAndUpdate(requestId, { status: "Rifutata" });
+            const request = yield BookRequest_1.default.findByIdAndUpdate(requestId, {
+                status: "Rifiutata",
+            }, { new: true });
+            yield User_1.default.updateMany({ _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } }, { $push: { storedRequests: request } });
             req.body.books.status = "In Attesa Di Scambio";
         }
-        console.log(req.body.books);
         next();
     }
     catch (e) {

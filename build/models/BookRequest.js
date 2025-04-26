@@ -37,8 +37,10 @@ const mongoose_1 = __importStar(require("mongoose"));
 const BookRequestSchema = new mongoose_1.Schema({
     userRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     bookRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "Book", required: true },
-    proposedBook: { type: mongoose_1.Schema.Types.ObjectId, ref: "Book", required: true },
+    senderRef: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    senderBook: { type: mongoose_1.Schema.Types.ObjectId, ref: "Book", required: true },
     status: { type: String, default: "In Corso" },
+    phoneNo: { type: String },
 });
 const BookRequest = mongoose_1.default.model("BookRequest", BookRequestSchema);
 exports.default = BookRequest;

@@ -13,7 +13,6 @@ import UserLoginVerifier from "../middleware/verification/UserLoginVerifier";
 import UserTokenVerifier from "../middleware/verification/UserTokenVerifier";
 import UserSignupVerifier from "../middleware/verification/UserSignupVerifier";
 import EmailTokenSender from "../middleware/EmailTokenSender";
-import { isMarkedAsUntransferable } from "node:worker_threads";
 
 const usersRouter = Router();
 
@@ -73,7 +72,7 @@ usersRouter.post(
           loginAuthToken: loginAuthToken,
           userId: userData._id,
           username: userData.username || "",
-          phoneNo: userData.phoneNo || ""
+          phoneNo: userData.phoneNo || "",
         });
       }
     } catch (e) {
@@ -132,6 +131,54 @@ usersRouter.get(
       }
     } catch (e: any) {
       res.status(500).send(e.message);
+    }
+  }
+);
+
+usersRouter.get(
+  "/:id/my-requests",
+  userTokenValidator,
+  UserTokenVerifier,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.params.id;
+      const userInfo = await User.findById(userId)
+        .populate({
+          path: "sentRequests",
+          populate: [
+            { path: "userRef", select: "username" },
+            { path: "bookRef", select: "title" },
+            { path: "senderRef", select: "username" },
+            { path: "senderBook", select: "title" },
+          ],
+        })
+        .populate({
+          path: "receivedRequests",
+          populate: [
+            { path: "userRef", select: "username" },
+            { path: "bookRef", select: "title" },
+            { path: "senderRef", select: "username" },
+            { path: "senderBook", select: "title" },
+          ],
+        })
+        .populate({
+          path: "storedRequests",
+          populate: [
+            { path: "userRef", select: "username" },
+            { path: "bookRef", select: "title" },
+            { path: "senderRef", select: "username" },
+            { path: "senderBook", select: "title" },
+          ],
+        });
+      if (userInfo) {
+        res.status(200).json({
+          sentRequests: userInfo.sentRequests,
+          receivedRequests: userInfo.receivedRequests,
+          storedRequests: userInfo.storedRequests,
+        });
+      }
+    } catch (e) {
+      res.status(500).send(e);
     }
   }
 );

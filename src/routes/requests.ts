@@ -13,22 +13,21 @@ bookRequestsRouter.post(
   UserTokenVerifier,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const sendingUserId = req.headers.userid;
       const request = await BookRequest.create(req.body);
       await User.findByIdAndUpdate(request.userRef, {
         $push: { receivedRequests: request },
       });
-      await User.findByIdAndUpdate(sendingUserId, {
+      await User.findByIdAndUpdate(request.senderRef, {
         $push: { sentRequests: request },
       });
       req.body.books = {
         bookRefId: request.bookRef.toString(),
-        proposedBookId: request.proposedBook.toString(),
+        proposedBookId: request.senderBook.toString(),
         status: "Scambio In Corso",
       };
       next();
-    } catch (e) {
-      res.status(500).send(e);
+    } catch (e: any) {
+      res.status(500).send(e.message);
     }
   },
   BookUpdater
@@ -47,15 +46,33 @@ bookRequestsRouter.patch(
         bookRefId: bookRef,
         proposedBookId: proposedBook,
       };
-      console.log(requestAccepted);
       if (requestAccepted === "true") {
-        await BookRequest.findByIdAndUpdate(requestId, { status: "Accettata" });
+        const request = await BookRequest.findByIdAndUpdate(
+          requestId,
+          {
+            status: "Accettata",
+          },
+          { new: true }
+        );
+        await User.updateMany(
+          { _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } },
+          { $push: { storedRequests: request } }
+        );
         req.body.books.status = "Scambio Accettato";
       } else {
-        await BookRequest.findByIdAndUpdate(requestId, { status: "Rifutata" });
+        const request = await BookRequest.findByIdAndUpdate(
+          requestId,
+          {
+            status: "Rifiutata",
+          },
+          { new: true }
+        );
+        await User.updateMany(
+          { _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } },
+          { $push: { storedRequests: request } }
+        );
         req.body.books.status = "In Attesa Di Scambio";
       }
-      console.log(req.body.books)
       next();
     } catch (e) {
       res.status(500).send(e);
