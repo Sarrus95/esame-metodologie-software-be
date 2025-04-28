@@ -41,31 +41,32 @@ bookRequestsRouter.post("/send-request", validators_1.userTokenValidator, UserTo
 }), BookUpdater_1.default);
 bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const requestId = req.params.id;
         const requestAccepted = req.headers.requestresponse;
-        const { bookRef, proposedBook } = req.body;
+        const { _id, userRef, bookRef, senderRef, senderBook } = req.body;
         req.body.books = {
-            bookRefId: bookRef,
-            proposedBookId: proposedBook,
+            bookRefId: bookRef._id,
+            senderBookId: senderBook._id,
         };
         if (requestAccepted === "true") {
-            const request = yield BookRequest_1.default.findByIdAndUpdate(requestId, {
+            const userPhoneNo = req.headers.phoneno;
+            const request = yield BookRequest_1.default.findByIdAndUpdate(_id, {
                 status: "Accettata",
+                phoneNo: userPhoneNo
             }, { new: true });
-            yield User_1.default.updateMany({ _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } }, { $push: { storedRequests: request } });
+            yield User_1.default.updateMany({ _id: { $in: [userRef._id, senderRef._id] } }, { $push: { storedRequests: request } });
             req.body.books.status = "Scambio Accettato";
         }
         else {
-            const request = yield BookRequest_1.default.findByIdAndUpdate(requestId, {
+            const request = yield BookRequest_1.default.findByIdAndUpdate(_id, {
                 status: "Rifiutata",
             }, { new: true });
-            yield User_1.default.updateMany({ _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } }, { $push: { storedRequests: request } });
+            yield User_1.default.updateMany({ _id: { $in: [userRef._id, senderRef._id] } }, { $push: { storedRequests: request } });
             req.body.books.status = "In Attesa Di Scambio";
         }
         next();
     }
     catch (e) {
-        res.status(500).send(e);
+        res.status(500).send(e.message);
     }
 }), BookUpdater_1.default);
 exports.default = bookRequestsRouter;

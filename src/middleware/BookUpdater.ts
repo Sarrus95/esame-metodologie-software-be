@@ -3,19 +3,18 @@ import Book from "../models/Book";
 
 const BookUpdater = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { bookRefId, proposedBookId, status } = req.body.books;
+    const { bookRefId, senderBookId, status } = req.body.books;
     if (status === "Scambio Accettato") {
-      const userPhoneNo = req.body.phoneno;
       await Book.updateMany(
-        { _id: { $in: [bookRefId, proposedBookId] } },
-        { $set: { status: status, phoneNo: userPhoneNo } }
+        { _id: { $in: [bookRefId, senderBookId] } },
+        { $set: { status: status} }
       );
       res.status(200).json({
         message: "Scambio Accettato!",
       });
     } else {
       await Book.updateMany(
-        { _id: { $in: [bookRefId, proposedBookId] } },
+        { _id: { $in: [bookRefId, senderBookId] } },
         { $set: { status: status } }
       );
       res.status(200).json({ message: "Scambio Rifiutato!" });

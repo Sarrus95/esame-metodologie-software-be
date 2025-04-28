@@ -39,43 +39,44 @@ bookRequestsRouter.patch(
   UserTokenVerifier,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const requestId = req.params.id;
       const requestAccepted = req.headers.requestresponse;
-      const { bookRef, proposedBook } = req.body;
+      const { _id, userRef, bookRef, senderRef, senderBook } = req.body;
       req.body.books = {
-        bookRefId: bookRef,
-        proposedBookId: proposedBook,
+        bookRefId: bookRef._id,
+        senderBookId: senderBook._id,
       };
       if (requestAccepted === "true") {
+        const userPhoneNo = req.headers.phoneno;
         const request = await BookRequest.findByIdAndUpdate(
-          requestId,
+          _id,
           {
             status: "Accettata",
+            phoneNo: userPhoneNo
           },
           { new: true }
         );
         await User.updateMany(
-          { _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } },
+          { _id: { $in: [userRef._id, senderRef._id] } },
           { $push: { storedRequests: request } }
         );
         req.body.books.status = "Scambio Accettato";
       } else {
         const request = await BookRequest.findByIdAndUpdate(
-          requestId,
+          _id,
           {
             status: "Rifiutata",
           },
           { new: true }
         );
         await User.updateMany(
-          { _id: { $in: [proposedBook.ownerId, bookRef.ownerId] } },
+          { _id: { $in: [userRef._id, senderRef._id] } },
           { $push: { storedRequests: request } }
         );
         req.body.books.status = "In Attesa Di Scambio";
       }
       next();
-    } catch (e) {
-      res.status(500).send(e);
+    } catch (e: any) {
+      res.status(500).send(e.message);
     }
   },
   BookUpdater

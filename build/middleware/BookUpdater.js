@@ -15,16 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Book_1 = __importDefault(require("../models/Book"));
 const BookUpdater = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { bookRefId, proposedBookId, status } = req.body.books;
+        const { bookRefId, senderBookId, status } = req.body.books;
         if (status === "Scambio Accettato") {
-            const userPhoneNo = req.body.phoneno;
-            yield Book_1.default.updateMany({ _id: { $in: [bookRefId, proposedBookId] } }, { $set: { status: status, phoneNo: userPhoneNo } });
+            yield Book_1.default.updateMany({ _id: { $in: [bookRefId, senderBookId] } }, { $set: { status: status } });
             res.status(200).json({
                 message: "Scambio Accettato!",
             });
         }
         else {
-            yield Book_1.default.updateMany({ _id: { $in: [bookRefId, proposedBookId] } }, { $set: { status: status } });
+            yield Book_1.default.updateMany({ _id: { $in: [bookRefId, senderBookId] } }, { $set: { status: status } });
             res.status(200).json({ message: "Scambio Rifiutato!" });
         }
     }
