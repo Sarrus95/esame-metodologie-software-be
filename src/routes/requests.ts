@@ -13,16 +13,17 @@ bookRequestsRouter.post(
   UserTokenVerifier,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { userRef, bookRef, senderRef, senderBook } = req.body;
       const request = await BookRequest.create(req.body);
-      await User.findByIdAndUpdate(request.userRef, {
+      await User.findByIdAndUpdate(userRef, {
         $push: { receivedRequests: request },
       });
-      await User.findByIdAndUpdate(request.senderRef, {
+      await User.findByIdAndUpdate(senderRef, {
         $push: { sentRequests: request },
       });
       req.body.books = {
-        bookRefId: request.bookRef.toString(),
-        proposedBookId: request.senderBook.toString(),
+        bookRefId: bookRef,
+        senderBookId: senderBook,
         status: "Scambio In Corso",
       };
       next();
@@ -42,8 +43,8 @@ bookRequestsRouter.patch(
       const requestAccepted = req.headers.requestresponse;
       const { _id, userRef, bookRef, senderRef, senderBook } = req.body;
       req.body.books = {
-        bookRefId: bookRef._id,
-        senderBookId: senderBook._id,
+        bookRefId: bookRef,
+        senderBookId: senderBook,
       };
       if (requestAccepted === "true") {
         const userPhoneNo = req.headers.phoneno;
@@ -56,7 +57,7 @@ bookRequestsRouter.patch(
           { new: true }
         );
         await User.updateMany(
-          { _id: { $in: [userRef._id, senderRef._id] } },
+          { _id: { $in: [userRef, senderRef] } },
           { $push: { storedRequests: request } }
         );
         req.body.books.status = "Scambio Accettato";
@@ -69,7 +70,7 @@ bookRequestsRouter.patch(
           { new: true }
         );
         await User.updateMany(
-          { _id: { $in: [userRef._id, senderRef._id] } },
+          { _id: { $in: [userRef, senderRef] } },
           { $push: { storedRequests: request } }
         );
         req.body.books.status = "In Attesa Di Scambio";

@@ -21,16 +21,17 @@ const UserTokenVerifier_1 = __importDefault(require("../middleware/verification/
 const bookRequestsRouter = (0, express_1.Router)();
 bookRequestsRouter.post("/send-request", validators_1.userTokenValidator, UserTokenVerifier_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { userRef, bookRef, senderRef, senderBook } = req.body;
         const request = yield BookRequest_1.default.create(req.body);
-        yield User_1.default.findByIdAndUpdate(request.userRef, {
+        yield User_1.default.findByIdAndUpdate(userRef, {
             $push: { receivedRequests: request },
         });
-        yield User_1.default.findByIdAndUpdate(request.senderRef, {
+        yield User_1.default.findByIdAndUpdate(senderRef, {
             $push: { sentRequests: request },
         });
         req.body.books = {
-            bookRefId: request.bookRef.toString(),
-            proposedBookId: request.senderBook.toString(),
+            bookRefId: bookRef,
+            senderBookId: senderBook,
             status: "Scambio In Corso",
         };
         next();
@@ -44,8 +45,8 @@ bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerif
         const requestAccepted = req.headers.requestresponse;
         const { _id, userRef, bookRef, senderRef, senderBook } = req.body;
         req.body.books = {
-            bookRefId: bookRef._id,
-            senderBookId: senderBook._id,
+            bookRefId: bookRef,
+            senderBookId: senderBook,
         };
         if (requestAccepted === "true") {
             const userPhoneNo = req.headers.phoneno;
@@ -53,14 +54,14 @@ bookRequestsRouter.patch("/:id", validators_1.userTokenValidator, UserTokenVerif
                 status: "Accettata",
                 phoneNo: userPhoneNo
             }, { new: true });
-            yield User_1.default.updateMany({ _id: { $in: [userRef._id, senderRef._id] } }, { $push: { storedRequests: request } });
+            yield User_1.default.updateMany({ _id: { $in: [userRef, senderRef] } }, { $push: { storedRequests: request } });
             req.body.books.status = "Scambio Accettato";
         }
         else {
             const request = yield BookRequest_1.default.findByIdAndUpdate(_id, {
                 status: "Rifiutata",
             }, { new: true });
-            yield User_1.default.updateMany({ _id: { $in: [userRef._id, senderRef._id] } }, { $push: { storedRequests: request } });
+            yield User_1.default.updateMany({ _id: { $in: [userRef, senderRef] } }, { $push: { storedRequests: request } });
             req.body.books.status = "In Attesa Di Scambio";
         }
         next();
